@@ -14,7 +14,7 @@ void list_init(List *list, size_t elementSize) {
 //Destroy associated memory
 void list_destroy(List *list) {
 
-    struct ListNode *current = list->head;;
+    struct ListNode *current = list->head;
     struct ListNode *next = current;
     for(size_t i = 0; i < list->length; i++) {
         next = next->next;
@@ -45,15 +45,14 @@ void *list_push(List *list, void *newItem) {
     if(newNode == NULL) return NULL;
 
     memcpy(newNode->data, newItem, list->elementSize);
-    newNode->next = NULL;
     newNode->next = list->head;
     list->head = newNode;
-
+    list->length++;
     return newNode; 
 }
 
 //Peak front of a list
-const void *list_peak_front(List *list) {
+const void *list_peek_front(List *list) {
     return list->head->data;
 }
 
@@ -64,6 +63,7 @@ void list_delete_front(List *list) {
    
     struct ListNode *current = list->head; 
     list->head = list->head->next;
+    list->length--;
     free(current);
     return;
 }
@@ -72,17 +72,18 @@ void list_delete_front(List *list) {
 //Delete element at an index
 void list_delete_index(List *list, size_t index) {
 
-    struct ListNode *previous = list->head;
-    struct ListNode *current = previous;
-    struct ListNode *next = current;
+    struct ListNode **previous = &list->head;
+    struct ListNode *current = *previous;
+    struct ListNode *next = list->head->next;
 
     for(size_t i = 0; i < index; i++) {
-        previous = current;
-        current = next;
+        previous = &(*previous)->next;
+        current = current->next;
         next = next->next;
     }
+    *previous = next;
     free(current);
-
+    list->length--;
     return;
 }
 
