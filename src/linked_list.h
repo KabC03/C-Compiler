@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 struct ListNode {
     struct ListNode *next;
@@ -15,6 +16,17 @@ typedef struct List {
     size_t elementSize;
     size_t length;
 } List;
+
+void list_init(List *list, size_t elementSize);
+void list_destroy(List *list);
+size_t list_length(List *list);
+void *list_push(List *list, void *newItem);
+const void *list_peak_front(List *list);
+void list_delete_front(List *list);
+void list_delete_index(List *list, size_t index);
+void *list_at(List *list, size_t index);
+void list_pop(List *list, void *buffer);
+
 
 #endif
 

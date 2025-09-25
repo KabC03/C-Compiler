@@ -40,7 +40,7 @@ size_t list_length(List *list) {
 //Insert item to a list - return reference to item in list
 void *list_push(List *list, void *newItem) {
     
-    struct ListNode newNode = malloc(sizeof(struct ListNode) + list->elementSize);
+    struct ListNode *newNode = malloc(sizeof(struct ListNode) + list->elementSize);
     if(newNode == NULL) return NULL;
 
     memcpy(newNode->data, newItem, list->elementSize);
@@ -50,14 +50,6 @@ void *list_push(List *list, void *newItem) {
 
     return newNode; 
 }
-
-
-//Pop from a list to a buffer
-void list_pop(List *list, void *buffer) {
-    memcpy(buffer, list->head->data, list->elementSize);
-    list_delete_front(list);
-}
-
 
 //Peak front of a list
 const void *list_peak_front(List *list) {
@@ -105,6 +97,11 @@ void *list_at(List *list, size_t index) {
     return current->data; 
 }
 
+//Pop from a list to a buffer
+void list_pop(List *list, void *buffer) {
+    memcpy(buffer, list->head->data, list->elementSize);
+    list_delete_front(list);
+}
 
 
 
