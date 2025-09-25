@@ -22,7 +22,8 @@ void list_destroy(List *list) {
 
         current = next;
     } 
-
+    list->head = NULL;
+    list->length = 0;
     return;
 }
 
@@ -77,10 +78,9 @@ void list_delete_index(List *list, size_t index) {
 
     for(size_t i = 0; i < index; i++) {
         previous = current;
-        current = next; 
+        current = next;
         next = next->next;
     }
-    previous->next = next;
     free(current);
 
     return;
