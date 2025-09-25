@@ -1,5 +1,7 @@
 #include "vector.h"
 
+
+
 //Initialise a vector
 void vector_init(Vector *vector, size_t elementSize) {
     vector->size = 0;
@@ -15,6 +17,7 @@ void vector_destroy(Vector *vector) {
     vector->size = 0;
     vector->capacity = 0;
     free(vector->data);
+    vector->data = NULL;
     return;
 }
 
@@ -27,11 +30,17 @@ size_t vector_size(Vector *vector) {
 
 //Resize a vector to a new size
 bool vector_resize(Vector *vector, size_t newSize) {
+    uint8_t *oldData = vector->data;
     uint8_t *data = vector->data;
     size_t size = vector->size;
     size_t elementSize = vector->elementSize;
-    if(realloc(data, elementSize * newSize) == NULL) {
+
+    data = realloc(data, elementSize * newSize);
+    if(data == NULL) {
+        vector->data = oldData;
         return false;
+    } else {
+        vector->data = data;
     }
 
     if(size > newSize) {
@@ -45,18 +54,18 @@ bool vector_resize(Vector *vector, size_t newSize) {
 //Get the item at a specific index in the vector
 const void *vector_at(Vector *vector, size_t index) {
     size_t elementSize = vector->elementSize;
-    return vector->data[elementSize * index];
+    return vector->data + (elementSize * index);
 }
 
 //Set the item at a specific index in the vector
 void vector_set(Vector *vector, size_t index, void *newItem) {
     size_t elementSize = vector->elementSize;
-    memcpy(vector->data[elementSize * index], newItem, elementSize);
+    memcpy(vector->data + (elementSize * index), newItem, elementSize);
     return;
 }
 
 //Find the first occurance of item in the vector and return a pointer to it
-const void *vector_find_first_occurance(Vector *vector, void *item) {
+const void *vector_find_first_occurrence(Vector *vector, void *item) {
     size_t size = vector->size;
     size_t elementSize = vector->elementSize;
 
@@ -64,7 +73,7 @@ const void *vector_find_first_occurance(Vector *vector, void *item) {
 
         const void *vectorAt = vector_at(vector, i);
         if(memcmp(vectorAt, item, elementSize) == 0) {
-            return vector_at;
+            return vectorAt;
         }
     }
     return NULL;
@@ -73,13 +82,16 @@ const void *vector_find_first_occurance(Vector *vector, void *item) {
 
 //Push a new item to the back of the vector, resizing if necessary
 bool vector_push_back(Vector *vector, void *newItem) {
+
+    const size_t EXPANSION_FACTOR = 2;
+
     size_t capacity = vector->capacity;
     size_t size = vector->size;
     size_t elementSize = vector->elementSize;
     if(size + 1 > capacity) {
-        vector_resize(vector, size + 1);
+        vector_resize(vector, size);
     }
-    memcpy(vector->data[elementSize * (size + 1)], newItem, elementSize);
+    memcpy(vector->data + (size * EXPANSION_FACTOR), newItem, elementSize);
     vector->size++;
     return true;
 }

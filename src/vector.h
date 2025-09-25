@@ -23,7 +23,7 @@ size_t vector_size(Vector *vector);
 bool vector_resize(Vector *vector, size_t newSize);
 const void *vector_at(Vector *vector, size_t index);
 void vector_set(Vector *vector, size_t index, void *newItem);
-const void *vector_find_first_occurance(Vector *vector, void *item);
+const void *vector_find_first_occurrence(Vector *vector, void *item);
 bool vector_push_back(Vector *vector, void *newItem);
 
 #endif
