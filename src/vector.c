@@ -25,15 +25,18 @@ bool vector_push_back(Vector *vector, void *item) {
     const size_t expansionFactor = 2;
     if(vector->top == vector->capacity) {
         //Reallocation required
-        void *temp = realloc(vector->data, (vector->capacity * expansionFactor * vector->dataSize) + 1);
+        size_t newCapacity = ((vector->capacity * expansionFactor) + 1);
+        void *temp = realloc(vector->data, vector->dataSize * newCapacity);
         if(temp == NULL) {
             return false;
         } else {
             vector->data = temp;
+            vector->capacity = newCapacity;
         }
     }
     void *ptr = ((uint8_t*)vector->data) + (vector->top * vector->dataSize); 
     memcpy(ptr, item, vector->dataSize);
+    vector->top++;
     return true;    
 }
 
