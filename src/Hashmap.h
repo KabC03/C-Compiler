@@ -7,7 +7,7 @@
 #include <string.h>
 
 
-
+typedef struct Bucket Bucket;
 typedef struct Hashmap {
 
     size_t keySize;

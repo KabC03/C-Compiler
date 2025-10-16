@@ -1,12 +1,6 @@
 #include "Hashmap.h"
 
-typedef struct Bucket {
 
-    Item *items;
-    size_t top;
-    size_t capacity;
-
-} Bucket;
 
 typedef struct Item {
 
@@ -15,14 +9,20 @@ typedef struct Item {
 
 } Item;
 
+typedef struct Bucket {
 
+    Item *items;
+    size_t top;
+    size_t capacity;
+
+} Bucket;
 
 
 inline size_t internal_hash(void *key, size_t keySize, size_t numBuckets) {
 
     size_t hash = 5381;
     for(size_t i = 0; i < keySize; i++) {
-        hash = ((hash << 5) + hash) + i;
+        hash = ((hash << 5) + hash) + ((uint8_t*)(key))[i];
     }
 
     return hash % numBuckets;
@@ -33,7 +33,7 @@ inline Item *internal_hashmap_find_item(Bucket *bucket, void *key, size_t keySiz
 
     for(size_t i = 0; i < bucket->top; i++) {
 
-        if(memcmp((uint8_t*)(&(bucket->items[i].key)), (uint8_t*)(key), 1 == 0)) {
+        if(memcmp((uint8_t*)(&(bucket->items[i].key)), (uint8_t*)(key), 1) == 0) {
             //Check lowest byte first
             if(memcmp(&(bucket->items[i].key), key, keySize) == 0) {
                 return &(bucket->items[i]);
@@ -50,7 +50,7 @@ void hashmap_init(Hashmap *hashmap, size_t keySize, size_t valueSize) {
     hashmap->valueSize = valueSize;
     hashmap->buckets = NULL;
 
-    Bucket bucket = {NULL, NULL, 0, 0};
+    Bucket bucket = {NULL, 0, 0};
     for(size_t i = 0; i < hashmap->numBuckets; i++) {
         hashmap->buckets[i] = bucket;
     }
@@ -120,8 +120,6 @@ bool hashmap_insert(Hashmap *hashmap, void *key, void *value) {
     const size_t expansionFactor = 2;
     size_t keySize = hashmap->keySize;
     size_t valueSize = hashmap->valueSize;
-    size_t numBuckets = hashmap->numBuckets;
-
     size_t index = internal_hash(key, hashmap->keySize, hashmap->numBuckets);
     Bucket *bucket = &(hashmap->buckets[index]);
     size_t bucketTop = bucket->top;
@@ -134,8 +132,9 @@ bool hashmap_insert(Hashmap *hashmap, void *key, void *value) {
         bucket->items = itemTemp;
         bucket->capacity = (bucket->capacity * expansionFactor) + 1;
     }
+    memcpy(bucket->items[bucketTop].key, key, keySize);
+    memcpy(bucket->items[bucketTop].value, value, valueSize);
 
-    memcpy(bucket->items + (bucketTop * keySize), key, sizeof(Item));
     bucket->top++;
 
     return true;

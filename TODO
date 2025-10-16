@@ -1,0 +1,4 @@
+- Work on Hashmap.c
+    - Compiler errors
+    - Bugs
+    - Then test with Hashmap_test.c
