@@ -1,98 +1,77 @@
-#include "vector.h"
+#include "Vector.h"
 
 
 
-//Initialise a vector
-void vector_init(Vector *vector, size_t elementSize) {
-    vector->size = 0;
+
+void vector_init(Vector *vector, size_t dataSize) {
+
     vector->capacity = 0;
-    vector->elementSize = elementSize;
+    vector->top = 0;
     vector->data = NULL;
+    vector->dataSize = dataSize;
     return;
 }
 
+const void *vector_get_index(Vector *vector, size_t index) {
 
-//Destroy a vector and associated memory
-void vector_destroy(Vector *vector) {
-    vector->size = 0;
-    vector->capacity = 0;
-    free(vector->data);
-    vector->data = NULL;
-    return;
+    if(index >= vector->top) {
+        return NULL;
+    } 
+    return ((uint8_t*)vector->data) + (index * vector->dataSize); 
 }
 
+bool vector_push_back(Vector *vector, void *item) {
 
-//Get size of vector
-size_t vector_size(Vector *vector) {
-    return vector->size;
+    const size_t expansionFactor = 2;
+    if(vector->top == vector->capacity) {
+        //Reallocation required
+        void *temp = realloc(vector->data, (vector->capacity * expansionFactor * vector->dataSize) + 1);
+        if(temp == NULL) {
+            return false;
+        } else {
+            vector->data = temp;
+        }
+    }
+    void *ptr = ((uint8_t*)vector->data) + (vector->top * vector->dataSize); 
+    memcpy(ptr, item, vector->dataSize);
+    return true;    
 }
 
-
-//Resize a vector to a new size
 bool vector_resize(Vector *vector, size_t newSize) {
-    uint8_t *oldData = vector->data;
-    uint8_t *data = vector->data;
-    size_t size = vector->size;
-    size_t elementSize = vector->elementSize;
-
-    data = realloc(data, elementSize * newSize);
-    if(data == NULL) {
-        vector->data = oldData;
+    void *temp = realloc(vector->data, newSize * vector->dataSize);
+    if(temp == NULL) {
         return false;
     } else {
-        vector->data = data;
+        vector->data = temp;
     }
 
-    if(size > newSize) {
-        vector->size = newSize;
+    if(vector->top > newSize) {
+        vector->top = newSize;
     }
     vector->capacity = newSize;
     return true;
 }
 
-
-//Get the item at a specific index in the vector
-const void *vector_at(Vector *vector, size_t index) {
-    size_t elementSize = vector->elementSize;
-    return vector->data + (elementSize * index);
+size_t vector_get_size(Vector *vector) {
+    return vector->top;
 }
 
-//Set the item at a specific index in the vector
-void vector_set(Vector *vector, size_t index, void *newItem) {
-    size_t elementSize = vector->elementSize;
-    memcpy(vector->data + (elementSize * index), newItem, elementSize);
+void vector_destroy(Vector *vector) {
+    free(vector->data);
+    vector->capacity = 0;
+    vector->top = 0;
+    vector->data = NULL;
     return;
 }
 
-//Find the first occurance of item in the vector and return a pointer to it
-const void *vector_find_first_occurrence(Vector *vector, void *item) {
-    size_t size = vector->size;
-    size_t elementSize = vector->elementSize;
 
-    for(size_t i = 0; i < size; i++) {
+bool vector_set_index(Vector *vector, size_t index, void *item) {
 
-        const void *vectorAt = vector_at(vector, i);
-        if(memcmp(vectorAt, item, elementSize) == 0) {
-            return vectorAt;
-        }
-    }
-    return NULL;
-}
-
-
-//Push a new item to the back of the vector, resizing if necessary
-bool vector_push_back(Vector *vector, void *newItem) {
-
-    const size_t EXPANSION_FACTOR = 2;
-
-    size_t capacity = vector->capacity;
-    size_t size = vector->size;
-    size_t elementSize = vector->elementSize;
-    if(size + 1 > capacity) {
-        vector_resize(vector, size);
-    }
-    memcpy(vector->data + (size * EXPANSION_FACTOR), newItem, elementSize);
-    vector->size++;
+    if(index >= vector->top) {
+        return false;
+    } 
+    void *dest = ((uint8_t*)vector->data) + (index * vector->dataSize); 
+    memcpy(dest, item, vector->dataSize);
     return true;
 }
 

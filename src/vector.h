@@ -1,30 +1,27 @@
-#ifndef VECTOR_H
-#define VECTOR_H
-
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <string.h>
 
 
 typedef struct Vector {
-    size_t size;
-    size_t capacity;
-    size_t elementSize;
 
-    uint8_t *data;
+    void *data;
+    size_t dataSize;
+    size_t capacity;
+    size_t top;
+
 } Vector;
 
 
-void vector_init(Vector *vector, size_t elementSize);
-void vector_destroy(Vector *vector);
-size_t vector_size(Vector *vector);
+void vector_init(Vector *vector, size_t dataSize);
+bool vector_push_back(Vector *vector, void *item);
 bool vector_resize(Vector *vector, size_t newSize);
-const void *vector_at(Vector *vector, size_t index);
-void vector_set(Vector *vector, size_t index, void *newItem);
-const void *vector_find_first_occurrence(Vector *vector, void *item);
-bool vector_push_back(Vector *vector, void *newItem);
+size_t vector_get_size(Vector *vector);
+const void *vector_get_index(Vector *vector, size_t index);
+void vector_destroy(Vector *vector);
+bool vector_set_index(Vector *vector, size_t index, void *item);
 
-#endif
+
 
