@@ -41,6 +41,10 @@ bool vector_push_back(Vector *vector, void *item) {
 }
 
 bool vector_resize(Vector *vector, size_t newSize) {
+    if(newSize == 0) {
+        vector_destroy(vector);
+        return true;
+    }
     void *temp = realloc(vector->data, newSize * vector->dataSize);
     if(temp == NULL) {
         return false;

@@ -1,3 +1,6 @@
+#ifndef VECTOR_H
+#define VECTOR_H
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -23,5 +26,5 @@ const void *vector_get_index(Vector *vector, size_t index);
 void vector_destroy(Vector *vector);
 bool vector_set_index(Vector *vector, size_t index, void *item);
 
-
+#endif // VECTOR_H
 
