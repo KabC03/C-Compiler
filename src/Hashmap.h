@@ -8,7 +8,16 @@
 
 
 
-typedef struct Hashmap Hashmap;
+typedef struct Hashmap {
+
+    size_t keySize;
+    size_t valueSize;
+
+    Bucket *buckets;
+    size_t numBuckets;
+    //Use array of arrays, avoid pointer chasing
+
+} Hashmap;
 
 
 void hashmap_init(Hashmap *hashmap, size_t keySize, size_t valueSize);

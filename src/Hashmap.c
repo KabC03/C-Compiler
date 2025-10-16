@@ -15,16 +15,7 @@ typedef struct Item {
 
 } Item;
 
-typedef struct Hashmap {
 
-    size_t keySize;
-    size_t valueSize;
-
-    Bucket *buckets;
-    size_t numBuckets;
-    //Use array of arrays, avoid pointer chasing
-
-} Hashmap;
 
 
 inline size_t internal_hash(void *key, size_t keySize, size_t numBuckets) {

@@ -4,6 +4,8 @@
         "stdlib.h": "c",
         "inttypes.h": "c",
         "stdbool.h": "c",
-        "hashmap_test.h": "c"
+        "hashmap_test.h": "c",
+        "string.h": "c",
+        "stdint.h": "c"
     }
 }
