@@ -1,6 +1,14 @@
 #include "Vector.h"
 
 
+typedef struct Vector {
+
+    void *data;
+    size_t dataSize;
+    size_t capacity;
+    size_t top;
+
+} Vector;
 
 
 void vector_init(Vector *vector, size_t dataSize) {

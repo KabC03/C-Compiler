@@ -1,8 +1,10 @@
 #include "../src/Vector.h"
 #include "../testing/Vector_test.h"
+#include "../testing/Hashmap_test.h"
+
 
 int main(void) {
-    vector_test();
+    hashmap_test();
     return 0;
 }
 
