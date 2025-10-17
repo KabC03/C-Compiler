@@ -18,7 +18,7 @@ typedef struct Bucket {
 } Bucket;
 
 
-inline size_t internal_hash(void *key, size_t keySize, size_t numBuckets) {
+inline size_t internal_hash(const void *key, size_t keySize, size_t numBuckets) {
 
     size_t hash = 5381;
     for(size_t i = 0; i < keySize; i++) {
@@ -29,13 +29,13 @@ inline size_t internal_hash(void *key, size_t keySize, size_t numBuckets) {
 }
 
 
-inline Item *internal_hashmap_find_item(Bucket *bucket, void *key, size_t keySize) {
+inline Item *internal_hashmap_find_item(Bucket *bucket, const void *key, size_t keySize) {
 
     for(size_t i = 0; i < bucket->top; i++) {
 
-        if(memcmp((uint8_t*)(&(bucket->items[i].key)), (uint8_t*)(key), 1) == 0) {
+        if(memcmp((uint8_t*)(bucket->items[i].key), (uint8_t*)(key), 1) == 0) {
             //Check lowest byte first
-            if(memcmp(&(bucket->items[i].key), key, keySize) == 0) {
+            if(memcmp(bucket->items[i].key, key, keySize) == 0) {
                 return &(bucket->items[i]);
             }
         }
@@ -45,38 +45,56 @@ inline Item *internal_hashmap_find_item(Bucket *bucket, void *key, size_t keySiz
 
 
 
-void hashmap_init(Hashmap *hashmap, size_t keySize, size_t valueSize) {
+bool hashmap_init(Hashmap *hashmap, size_t keySize, size_t valueSize, size_t numBuckets) {
     hashmap->keySize = keySize;
     hashmap->valueSize = valueSize;
-    hashmap->buckets = NULL;
+    hashmap->numBuckets = numBuckets;
+
+    if(numBuckets == 0) {
+        return false;
+    }
+
+    hashmap->buckets = malloc(sizeof(Bucket) * numBuckets);
+    if(hashmap->buckets == NULL) {
+        return false;
+    }
 
     Bucket bucket = {NULL, 0, 0};
     for(size_t i = 0; i < hashmap->numBuckets; i++) {
         hashmap->buckets[i] = bucket;
     }
 
-    return;
+    return true;
 }
 
 void hashmap_destroy(Hashmap *hashmap) {
 
     for(size_t i = 0; i < hashmap->numBuckets; i++) {
 
-        Bucket bucket = hashmap->buckets[i];
-        free(bucket.items);
+        Bucket *bucket = &(hashmap->buckets[i]);
+        for(size_t j = 0; j < bucket->top; j++) {
+            free(bucket->items[j].key);
+            free(bucket->items[j].value);
+        }   
+        free(bucket->items);
     }
     free(hashmap->buckets);
     hashmap->buckets = NULL;
+    hashmap->numBuckets = 0;
+    return;
 }
 
 
-bool hashmap_delete(Hashmap *hashmap, void *key) {
+bool hashmap_delete(Hashmap *hashmap, const void *key) {
     size_t index = internal_hash(key, hashmap->keySize, hashmap->numBuckets);
     Bucket *bucket = &(hashmap->buckets[index]);
 
     Item *item = internal_hashmap_find_item(bucket, key, hashmap->keySize);
     if(item != NULL) {
-        *item = bucket->items[bucket->top]; //Replace with top element
+        *item = bucket->items[bucket->top - 1]; //Replace with top element
+        free(item->key);
+        free(item->value);
+        bucket->top--;
         return true;
     }
     //Not in map
@@ -84,7 +102,7 @@ bool hashmap_delete(Hashmap *hashmap, void *key) {
 }
 
 
-const void *hashmap_find(Hashmap *hashmap, void *key) {
+const void *hashmap_find(Hashmap *hashmap, const void *key) {
     size_t index = internal_hash(key, hashmap->keySize, hashmap->numBuckets);
     Bucket *bucket = &(hashmap->buckets[index]);
 
@@ -93,11 +111,11 @@ const void *hashmap_find(Hashmap *hashmap, void *key) {
         return item->value;
     }
 
-    return false;
+    return NULL;
 }
 
 
-bool hashmap_set(Hashmap *hashmap, void *key, void *newValue) {
+bool hashmap_set(Hashmap *hashmap, const void *key, const void *newValue) {
     size_t index = internal_hash(key, hashmap->keySize, hashmap->numBuckets);
     Bucket *bucket = &(hashmap->buckets[index]);
 
@@ -111,7 +129,7 @@ bool hashmap_set(Hashmap *hashmap, void *key, void *newValue) {
     return false;
 }
 
-bool hashmap_insert(Hashmap *hashmap, void *key, void *value) {
+bool hashmap_insert(Hashmap *hashmap, const void *key, const void *value) {
 
     if(hashmap_find(hashmap, key) != NULL) {
         return false;
@@ -124,13 +142,39 @@ bool hashmap_insert(Hashmap *hashmap, void *key, void *value) {
     Bucket *bucket = &(hashmap->buckets[index]);
     size_t bucketTop = bucket->top;
 
+    void *keyPtr = malloc(keySize);
+    void *valuePtr = malloc(valueSize);
+    if(keyPtr == NULL || valuePtr == NULL) {
+        if(keyPtr != NULL) {
+            free(keyPtr);
+        }
+        if(valuePtr != NULL) {
+            free(valuePtr);
+        }
+        return false;
+    } else {
+        memcpy(keyPtr, key, keySize);
+        memcpy(valuePtr, value, valueSize);
+    }
 
     if(bucket->top == bucket->capacity) {
         //Resize
-        void *itemTemp = malloc(sizeof(Item) * ((bucket->capacity * expansionFactor) + 1));
+        Item *itemTemp = realloc(bucket->items, sizeof(Item) * ((bucket->capacity * expansionFactor) + 1));
+        if(itemTemp == NULL) {
+            if(keyPtr != NULL) {
+                free(keyPtr);
+            }
+            if(valuePtr != NULL) {
+                free(valuePtr);
+            }
+            return false;
+        }
 
+        itemTemp->key = keyPtr;
+        itemTemp->value = valuePtr;
         bucket->items = itemTemp;
         bucket->capacity = (bucket->capacity * expansionFactor) + 1;
+        bucket->items = itemTemp;
     }
     memcpy(bucket->items[bucketTop].key, key, keySize);
     memcpy(bucket->items[bucketTop].value, value, valueSize);
