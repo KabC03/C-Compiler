@@ -59,7 +59,7 @@ bool hashmap_init(Hashmap *hashmap, size_t keySize, size_t valueSize, size_t num
         return false;
     }
 
-    Bucket bucket = {NULL, 0, 0};
+    Bucket bucket = {NULL, -1, -1};
     for(size_t i = 0; i < hashmap->numBuckets; i++) {
         hashmap->buckets[i] = bucket;
     }
@@ -91,7 +91,12 @@ bool hashmap_delete(Hashmap *hashmap, const void *key) {
 
     Item *item = internal_hashmap_find_item(bucket, key, hashmap->keySize);
     if(item != NULL) {
-        *item = bucket->items[bucket->top - 1]; //Replace with top element
+
+        Item *last = &(bucket->items[bucket->top - 1]);
+
+        if(item != last) {
+            *item = *last; //Replace with top element
+        }
         free(item->key);
         free(item->value);
         bucket->top--;
@@ -170,15 +175,11 @@ bool hashmap_insert(Hashmap *hashmap, const void *key, const void *value) {
             return false;
         }
 
-        itemTemp->key = keyPtr;
-        itemTemp->value = valuePtr;
-        bucket->items = itemTemp;
         bucket->capacity = (bucket->capacity * expansionFactor) + 1;
         bucket->items = itemTemp;
     }
-    memcpy(bucket->items[bucketTop].key, key, keySize);
-    memcpy(bucket->items[bucketTop].value, value, valueSize);
-
+    bucket->items[bucketTop - 1].key = keyPtr;
+    bucket->items[bucketTop - 1].value = valuePtr;
     bucket->top++;
 
     return true;
