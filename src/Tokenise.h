@@ -3,7 +3,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "Vector.h"
+#include "Hashmap.h"
 #include "Tokens.h"
 
 
@@ -15,20 +17,6 @@ typedef struct Token {
 } Token;
 
 
-
-Token tokenise_get_next_token(char *str) { //Get the next token from a string segment
-
-    Token token = {TOKEN_INVALID, NULL};
-
-    Vector buffer;
-    vector_init(&buffer, sizeof(char));
-
-    for(size_t i = 0; i < strlen(str); i++) {
-        
-    }
-
-    return token;
-}
 
 
 

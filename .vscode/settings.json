@@ -1,11 +1,5 @@
 {
     "files.associations": {
-        "vector.h": "c",
-        "stdlib.h": "c",
-        "inttypes.h": "c",
-        "stdbool.h": "c",
-        "hashmap_test.h": "c",
-        "string.h": "c",
-        "stdint.h": "c"
+        "vector_test.h": "c"
     }
 }
