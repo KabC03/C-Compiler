@@ -1,0 +1,25 @@
+#ifndef TOKENS_H
+#define TOKENS_H
+
+
+typedef enum TokenID {
+
+    TOKEN_INVALID = -1,    
+    TOKEN_IDENTIFIER = -2,
+    TOKEN_LITERAL = -3,
+
+    TOKEN_KEYWORD_DEF,
+    TOKEN_KEYWORD_RETURN,
+    TOKEN_KEYWORD_LET,
+    TOKEN_KEYWORD_INT,
+    TOKEN_KEYWORD_IF,
+    TOKEN_KEYWORD_ELIF,
+    TOKEN_KEYWORD_ELSE,
+    TOKEN_KEYWORD_WHILE,
+    TOKEN_KEYWORD_FOR,
+
+} TokenID;
+
+extern const char *TOKEN_VECTOR[];
+
+#endif //TOKENS_H

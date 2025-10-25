@@ -23,6 +23,7 @@ bool vector_push_back(Vector *vector, void *item);
 bool vector_resize(Vector *vector, size_t newSize);
 size_t vector_get_size(Vector *vector);
 const void *vector_get_index(Vector *vector, size_t index);
+bool vector_data_is_equal(Vector *vector, void *data, size_t dataSize);
 void vector_destroy(Vector *vector);
 bool vector_set_index(Vector *vector, size_t index, void *item);
 

@@ -73,6 +73,13 @@ void vector_destroy(Vector *vector) {
 }
 
 
+bool vector_data_is_equal(Vector *vector, void *data, size_t dataSize) {
+    if(memcmp(vector->data, data, dataSize) == 0) {
+        return true;
+    }
+    return false;
+}
+
 bool vector_set_index(Vector *vector, size_t index, void *item) {
 
     if(index >= vector->top) {
