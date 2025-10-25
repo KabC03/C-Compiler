@@ -47,3 +47,16 @@ Token tokenise_get_next_token(char *str) { //Get the next token from a string se
     return token;
 }
 
+
+void tokenise_destroy_token(Token *token) {
+    free(token->str);
+    return;
+}
+
+
+void tokenise_destroy_token_set(void) {
+    hashmap_destroy(&tokenSet);
+    return;
+}
+
+
