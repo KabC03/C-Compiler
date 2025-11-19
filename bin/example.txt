@@ -1,0 +1,14 @@
+
+
+DEF INT function(INT x, PTR y) {
+
+
+
+
+    RETURN x;
+}
+
+
+
+
+

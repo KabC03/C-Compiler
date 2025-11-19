@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "vector_test.h": "c"
+        "vector_test.h": "c",
+        "hashmap_test.h": "c",
+        "parse.h": "c"
     }
 }

@@ -21,9 +21,9 @@ bool tokenise_generate_token_set(void) {
 Token tokenise_get_next_token(char *str) { //Get the next token from a string segment
 
     Token token = {TOKEN_INVALID, NULL};
-    token.str = malloc(sizeof(char) * (strlen(str) + 1));
+    token.str = calloc(sizeof(char), (strlen(str) + 1));
 
-    bool isNumericLiteral = isnumber(str[0]); //Number literals start with a number
+    bool isNumericLiteral = isdigit(str[0]); //Number literals start with a number
     for(size_t i = 0; i < strlen(str); i++) {
         token.str[i] = str[i];
  

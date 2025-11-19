@@ -13,7 +13,7 @@ mkdir -p ./bin
 if [[ "$1" == "build" ]]; then
     clang ./src/*.c ./main/*.c -o ./bin/out -O3 -Wall -Wextra -Werror -Wpedantic -lm
 elif [[ "$1" == "testing" ]]; then
-    clang ./src/*.c ./main/*.c ./testing/*.c -o ./bin/out -O0 -fsanitize=address -Wall -Wextra -Werror -Wpedantic -lm
+    clang ./src/*.c ./main/*.c -o ./bin/out -O0 -fsanitize=address -Wall -Wextra -Werror -Wpedantic -lm
 else
     printf "\n\n[SHELL] Unknown argument: %s\n\n" "$1"
     exit -1

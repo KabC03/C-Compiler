@@ -18,7 +18,7 @@ typedef struct Bucket {
 } Bucket;
 
 
-inline size_t internal_hash(const void *key, size_t keySize, size_t numBuckets) {
+static inline size_t internal_hash(const void *key, size_t keySize, size_t numBuckets) {
 
     size_t hash = 5381;
     for(size_t i = 0; i < keySize; i++) {
@@ -29,15 +29,12 @@ inline size_t internal_hash(const void *key, size_t keySize, size_t numBuckets) 
 }
 
 
-inline Item *internal_hashmap_find_item(Bucket *bucket, const void *key, size_t keySize) {
+static inline Item *internal_hashmap_find_item(Bucket *bucket, const void *key, size_t keySize) {
 
     for(size_t i = 0; i < bucket->top; i++) {
 
-        if(memcmp((uint8_t*)(bucket->items[i].key), (uint8_t*)(key), 1) == 0) {
-            //Check lowest byte first
-            if(memcmp(bucket->items[i].key, key, keySize) == 0) {
-                return &(bucket->items[i]);
-            }
+        if(memcmp(bucket->items[i].key, key, keySize) == 0) {
+            return &(bucket->items[i]);
         }
     }
     return NULL;
@@ -59,7 +56,7 @@ bool hashmap_init(Hashmap *hashmap, size_t keySize, size_t valueSize, size_t num
         return false;
     }
 
-    Bucket bucket = {NULL, -1, -1};
+    Bucket bucket = {NULL, 0, 0};
     for(size_t i = 0; i < hashmap->numBuckets; i++) {
         hashmap->buckets[i] = bucket;
     }
@@ -94,11 +91,12 @@ bool hashmap_delete(Hashmap *hashmap, const void *key) {
 
         Item *last = &(bucket->items[bucket->top - 1]);
 
+        free(item->key);
+        free(item->value);
         if(item != last) {
             *item = *last; //Replace with top element
         }
-        free(item->key);
-        free(item->value);
+
         bucket->top--;
         return true;
     }
@@ -178,8 +176,8 @@ bool hashmap_insert(Hashmap *hashmap, const void *key, const void *value) {
         bucket->capacity = (bucket->capacity * expansionFactor) + 1;
         bucket->items = itemTemp;
     }
-    bucket->items[bucketTop - 1].key = keyPtr;
-    bucket->items[bucketTop - 1].value = valuePtr;
+    bucket->items[bucketTop].key = keyPtr;
+    bucket->items[bucketTop].value = valuePtr;
     bucket->top++;
 
     return true;
