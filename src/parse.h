@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include "vector.h"
+#include "Vector.h"
 #include "Tokenise.h"
 #include "Tokens.h"
 #include "Hashmap.h"

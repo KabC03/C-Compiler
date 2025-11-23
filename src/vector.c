@@ -1,4 +1,4 @@
-#include "vector.h"
+#include "Vector.h"
 
 
 
@@ -13,7 +13,7 @@ void vector_init(Vector *vector, size_t dataSize) {
     return;
 }
 
-const void *vector_get_index(Vector *vector, size_t index) {
+void *vector_get_index(Vector *vector, size_t index) {
 
     if(index >= vector->top) {
         return NULL;
@@ -40,6 +40,37 @@ bool vector_push_back(Vector *vector, void *item) {
     vector->top++;
     return true;    
 }
+
+bool vector_swap(Vector *vector, size_t index1, size_t index2) { //NOTE - could use XOR trick
+
+    void *temp = malloc(vector->dataSize);
+    if(!temp) {
+        return false;
+    }
+    void *item1 = vector_get_index(vector, index1);
+    void *item2 = vector_get_index(vector, index2);
+    memcpy(temp, item1, vector->dataSize);
+    memcpy(item1, item2, vector->dataSize);
+    memcpy(item2, temp, vector->dataSize);
+
+    free(temp);
+    return true;
+}
+
+size_t vector_find_element_index(Vector *vector, void *element) {
+    for(size_t i = 0; i < vector_get_size(vector); i++) {
+        void *item = vector_get_index(vector, i);
+        if(memcmp(item, element, vector->dataSize) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+bool vector_swap_and_pop(Vector *vector, size_t index) {
+    return vector_swap(vector, index, vector_get_size(vector));
+}
+
 
 bool vector_resize(Vector *vector, size_t newSize) {
     if(newSize == 0) {
