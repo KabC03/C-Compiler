@@ -18,4 +18,5 @@ void *map_set(Map *map, void *key, size_t keySize, void *value, size_t valueSize
 bool map_delete(Map *map, void *key, size_t keySize);
 void map_destroy(Map *map);
 
+
 #endif

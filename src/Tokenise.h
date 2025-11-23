@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "Vector.h"
-#include "Hashmap.h"
+#include "Map.h"
 #include "Tokens.h"
 
 

@@ -2,15 +2,16 @@
 
 
 
-Hashmap tokenSet;
+Map tokenSet;
 bool tokenise_generate_token_set(void) {
-    if(hashmap_init(&tokenSet, sizeof(char*), sizeof(int), 10) == false) {
+
+    if(map_init(&tokenSet, 10) == false) {
         return false;
     }
 
     for(size_t i = 0; i < TOKEN_VECTOR_SIZE; i++) {
-        if(hashmap_insert(&tokenSet, TOKEN_VECTOR[i], &i) == false) {
-            hashmap_destroy(&tokenSet);
+        if(map_insert(&tokenSet, TOKEN_VECTOR[i], strlen(TOKEN_VECTOR[i]), &i, sizeof(size_t)) == false) {
+            map_destroy(&tokenSet);
             return false;
         }
     }
@@ -33,7 +34,7 @@ Token tokenise_get_next_token(char *str) { //Get the next token from a string se
         }
     }
 
-    int *tokenID = (int*)hashmap_find(&tokenSet, token.str);
+    int *tokenID = (int*)map_find(&tokenSet, token.str, strlen(token.str));
     if(tokenID == NULL) { //Not a keyword
         if(isNumericLiteral == true) {
             token.id = TOKEN_LITERAL;
@@ -55,7 +56,7 @@ void tokenise_destroy_token(Token *token) {
 
 
 void tokenise_destroy_token_set(void) {
-    hashmap_destroy(&tokenSet);
+    map_destroy(&tokenSet);
     return;
 }
 
