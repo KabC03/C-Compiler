@@ -27,6 +27,11 @@ bool map_init(Map *map, size_t numBuckets) {
     if(!vector_resize(&(map->buckets), numBuckets)) {
         return false;
     }
+    for(size_t i = 0; i < numBuckets; i++) {
+        Bucket *bucket = vector_get_index(&(map->buckets), i);
+        vector_init(&(bucket->items), sizeof(Item));
+    }
+
     return true;
 }
 
@@ -68,17 +73,34 @@ void *map_insert(Map *map, void *key, size_t keySize, void *value, size_t valueS
 void *map_find(Map *map, void *key, size_t keySize) {
     size_t hash = internal_hash(key, keySize, vector_get_size(&(map->buckets)));
     Bucket *bucket = vector_get_index(&(map->buckets), hash);
-    size_t index = vector_find_element_index(&(bucket->items), key);
-    Item *item = vector_get_index(&(bucket->items), index);
-    return item->value;
+
+    for(size_t i = 0; i < vector_get_size(&(bucket->items)); i++) {
+        Item *item = vector_get_index(&(bucket->items), i);
+        if(item->keySize == keySize) {
+            if(memcmp(item->key, key, keySize) == 0) {
+                return item->value;
+            }
+        }
+    }
+
+    return NULL;
 }
 
 void *map_set(Map *map, void *key, size_t keySize, void *value, size_t valueSize) {
 
     size_t hash = internal_hash(key, keySize, vector_get_size(&(map->buckets)));
     Bucket *bucket = vector_get_index(&(map->buckets), hash);
-    size_t index = vector_find_element_index(&(bucket->items), key);
-    Item *item = vector_get_index(&(bucket->items), index);
+
+    Item *item = NULL;
+    for(size_t i = 0; i < vector_get_size(&(bucket->items)); i++) {
+        Item *temp = vector_get_index(&(bucket->items), i);
+        if(temp->keySize == keySize) {
+            if(memcmp(temp->key, key, keySize) == 0) {
+                item = temp;
+                break;
+            }
+        }
+    }
 
     void *newValue = malloc(valueSize); //Realloc copies old data (wasteful)
     if(!newValue) {
@@ -97,9 +119,20 @@ bool map_delete(Map *map, void *key, size_t keySize) {
 
     size_t hash = internal_hash(key, keySize, vector_get_size(&(map->buckets)));
     Bucket *bucket = vector_get_index(&(map->buckets), hash);
-    size_t index = vector_find_element_index(&(bucket->items), key);
-    vector_swap_and_pop(&(bucket->items), index);
-    return true;
+
+    for(size_t i = 0; i < vector_get_size(&(bucket->items)); i++) {
+        Item *item = vector_get_index(&(bucket->items), i);
+        if(item->keySize == keySize) {
+            if(memcmp(item->key, key, keySize) == 0) {
+                free(item->key);
+                free(item->value);
+                vector_swap_and_pop(&(bucket->items), i);
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 
