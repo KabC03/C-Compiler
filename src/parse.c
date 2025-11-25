@@ -21,12 +21,24 @@ typedef struct Functions {
 } Functions;
 
 bool parse_parse(FILE *inp, FILE *out) {
-    char buffer[MAX_TOKEN_SIZE];
 
-    while(!feof(inp)) {
-        fread(buffer, sizeof(char), MAX_TOKEN_LENGTH, inp);
+    fseek(inp, 0, SEEK_END);
+    long inpSize = ftell(inp);
+    if(size < 0) {
+        return false;
+    }
+    rewind(inp);
+    char *buffer = malloc(sizeof(char) * (inpSize + 1));
+    if(!buffer) {
+        return false;
+    }
+    size_t read = fread(buffer, sizeof(char), MAX_TOKEN_LENGTH, inp);
+    buffer[read] = '\0';
 
-        Token token = tokenise_peek(&buffer);
+    Token token = {TOKEN_IDENTIFIER, '\0'};
+
+    while(token.id != TOKEN_INVALID) {
+        token = tokenise_peek(&buffer);
         switch(token.id) {
             case TOKEN_INVALID: {
                 return false;
