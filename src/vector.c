@@ -74,9 +74,7 @@ bool vector_resize(Vector *vector, size_t newSize) {
         vector->data = temp;
     }
 
-    if(vector->top > newSize) {
-        vector->top = newSize;
-    }
+    vector->top = newSize;
     vector->capacity = newSize;
     return true;
 }

@@ -36,7 +36,7 @@ bool map_init(Map *map, size_t numBuckets) {
 }
 
 
-void *map_insert(Map *map, void *key, size_t keySize, void *value, size_t valueSize) {
+void *map_insert(Map *map, const void *key, size_t keySize, const void *value, size_t valueSize) {
 
     size_t bucketIndex = internal_hash(key, keySize, vector_get_size(&(map->buckets)));
     Bucket *bucket = vector_get_index(&(map->buckets), bucketIndex);

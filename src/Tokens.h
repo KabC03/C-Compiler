@@ -2,8 +2,11 @@
 #define TOKENS_H
 #include <stdint.h>
 #include <stdlib.h>
+#define MAX_TOKEN_LENGTH 10 //Allows storing largest 32 bit number
 
-typedef enum TokenID {
+
+
+typedef enum TOKEN_ID {
 
     TOKEN_INVALID = -1,    
     TOKEN_IDENTIFIER = -2,
@@ -35,9 +38,10 @@ typedef enum TokenID {
     TOKEN_SYMBOL_RIGHT_CURLY_BRACE,
     TOKEN_SYMBOL_SEMICOLON,
 
-} TokenID;
+} TOKEN_ID;
 
 extern const char *TOKEN_VECTOR[];
 extern const size_t TOKEN_VECTOR_SIZE;
+
 
 #endif //TOKENS_H

@@ -8,17 +8,17 @@
 #include "Map.h"
 #include "Tokens.h"
 
-
 typedef struct Token {
 
-    TokenID id;
-    char *str;
+    TOKEN_ID id;
+    char str[MAX_TOKEN_LENGTH];
 
 } Token;
 
+
 bool tokenise_generate_token_set(void);
-Token tokenise_get_next_token(char *str);
-void tokenise_destroy_token(Token *token);
 void tokenise_destroy_token_set(void);
+Token tokenise_peek(char **str);
+Token tokenise_consume(char **str);
 
 #endif // TOKENISE_H
