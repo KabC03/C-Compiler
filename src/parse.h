@@ -5,13 +5,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include "Vector.h"
-#include "Tokenise.h"
 #include "Tokens.h"
-#include "Hashmap.h"
+#include "Tokenise.h"
 
-
-
+bool parse_parse(FILE *inp, FILE *out);
 
 
 

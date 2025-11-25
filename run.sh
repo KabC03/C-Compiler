@@ -27,7 +27,7 @@ else
     printf "\n\n[SHELL] Compilation success\n\n"
 fi
 
-./bin/out
+./bin/out "../src.txt" "../dest.txt"
 if [[ $? -ne 0 ]]; then
     printf "\n\n[SHELL] Runtime error\n\n"
     exit -3

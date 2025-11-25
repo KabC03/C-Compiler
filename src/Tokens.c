@@ -1,10 +1,10 @@
 #include "Tokens.h"
 
 const char *TOKEN_VECTOR[] = {
+    "CALL",
     "DEF",
     "RETURN",
     "LET",
-    "INT",
     "IF",
     "ELIF",
     "ELSE",

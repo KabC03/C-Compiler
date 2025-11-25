@@ -1,11 +1,27 @@
 
 
-DEF INT function(INT x, PTR y) {
+DEF f1(x, y) {
 
-
-
+    LET y = 10 + 2;
+    IF(y == x) {
+        y = y + 1;
+    } ELIF(y > x) {
+        y = y - 1;
+    } ELSE {
+        y = 0;
+    }
+    WHILE(y > x) {
+        y = y - x;
+    }
 
     RETURN x;
 }
 
+
+DEF main() {
+
+    CALL x = f1(1,1);
+
+    RETURN 0;
+}
 

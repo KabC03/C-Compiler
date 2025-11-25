@@ -1,22 +1,27 @@
-#include "../src/Vector.h"
-#include "../src/Hashmap.h"
 #include "../src/Tokenise.h"
+#include "../src/Parse.h"
 #include <time.h>
+#include <stdio.h>
 
-int main(void) {
+int main(int argc, char *argv[]) {
 
-    char *str = "WHILE IF FOR, + - +++ == IF DEF WHILE WHILE WHILE";
-    Token token = {TOKEN_IDENTIFIER, "\0"};
-    clock_t start = clock();
-    while(token.id != TOKEN_INVALID) {
-        token = tokenise_consume(&str);
-        printf("%s\n", token.str);
+    if(argc != 3) {
+        printf("Usage: [./exec] [src.txt] [dest.txt]");
+        return -1;
+    }
+    FILE *src = fopen(argv[1], "r");
+    FILE *dest = fopen(argv[2], "w");
+    if(!src || !dest) {
+        if(src) fclose(src);
+        if(dest) fclose(dest);
+        printf("File read error");
+        return -2;
     }
 
-    clock_t end = clock();
-    double time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Execution time: %f", time);
 
+    fclose(src);
+    fclose(dest);
+    
     return 0;
 }
 
