@@ -26,7 +26,7 @@ bool parse_parse(FILE *inp, FILE *out) {
     while(!feof(inp)) {
         fread(buffer, sizeof(char), MAX_TOKEN_LENGTH, inp);
 
-        Token token = tokeniser_peek(buffer);
+        Token token = tokeniser_peek(&buffer);
         switch(token.id) {
             case TOKEN_INVALID: {
                 return false;
