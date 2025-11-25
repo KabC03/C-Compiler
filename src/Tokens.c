@@ -5,7 +5,6 @@ const char *TOKEN_VECTOR[] = {
     "RETURN",
     "LET",
     "INT",
-    "PTR",
     "IF",
     "ELIF",
     "ELSE",

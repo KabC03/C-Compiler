@@ -2,7 +2,7 @@
 #define TOKENS_H
 #include <stdint.h>
 #include <stdlib.h>
-#define MAX_TOKEN_LENGTH 10 //Allows storing largest 32 bit number
+#define MAX_TOKEN_LENGTH 12 //Allows storing largest 32 bit number (includes null terminator)
 
 
 

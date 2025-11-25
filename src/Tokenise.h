@@ -16,9 +16,12 @@ typedef struct Token {
 } Token;
 
 
-bool tokenise_generate_token_set(void);
-void tokenise_destroy_token_set(void);
 Token tokenise_peek(char **str);
 Token tokenise_consume(char **str);
+
+/*
+bool tokenise_generate_token_set(void);
+void tokenise_destroy_token_set(void);
+*/
 
 #endif // TOKENISE_H

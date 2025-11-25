@@ -1,21 +1,14 @@
 #include "parse.h"
-
-
+#define NUM_REGISTERS 4
 
 typedef struct Variable {
-    char *name;
-    Token type;
-    uint64_t value;
-
-    long registerIndex;
-    long stackOffset;
-
+    Token name;
+    size_t stackAddress;
 } Variable;
 
 typedef struct Scope {
-    Vector variables;
+    Vector variables; //Faster than a map for small number of variables
 } Scope;
-
 
 
 
