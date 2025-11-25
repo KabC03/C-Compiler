@@ -21,13 +21,12 @@ typedef struct Functions {
 } Functions;
 
 bool parse_parse(FILE *inp, FILE *out) {
-    char buffer[MAX_TOKEN_LENGTH];
-    char *bufferPtr = buffer;
+    char buffer[MAX_TOKEN_SIZE];
 
     while(!feof(inp)) {
         fread(buffer, sizeof(char), MAX_TOKEN_LENGTH, inp);
 
-        Token token = tokenise_peek(&bufferPtr);
+        Token token = tokenise_peek(&buffer);
         switch(token.id) {
             case TOKEN_INVALID: {
                 return false;
