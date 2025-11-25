@@ -24,7 +24,7 @@ bool parse_parse(FILE *inp, FILE *out) {
 
     fseek(inp, 0, SEEK_END);
     long inpSize = ftell(inp);
-    if(size < 0) {
+    if(inpSize < 0) {
         return false;
     }
     rewind(inp);
@@ -35,33 +35,33 @@ bool parse_parse(FILE *inp, FILE *out) {
     size_t read = fread(buffer, sizeof(char), MAX_TOKEN_LENGTH, inp);
     buffer[read] = '\0';
 
-    Token token = {TOKEN_IDENTIFIER, '\0'};
+    Token token = {TOKEN_IDENTIFIER, ""};
 
     while(token.id != TOKEN_INVALID) {
         token = tokenise_peek(&buffer);
         switch(token.id) {
             case TOKEN_INVALID: {
                 return false;
-
-            } case TOKEN_DEF: { //Function declaration
+                
+            } case TOKEN_KEYWORD_DEF: { //Function declaration
 
                 break;
             } case TOKEN_IDENTIFIER: { //Variable reassignment
 
                 break;
-            } case TOKEN_LET: { //Variable assignment
+            } case TOKEN_KEYWORD_LET: { //Variable assignment
 
                 break;
-            } case TOKEN_IF: { //If statement
+            } case TOKEN_KEYWORD_IF: { //If statement
 
                 break;
-            } case TOKEN_WHILE: { //White statement
+            } case TOKEN_KEYWORD_WHILE: { //White statement
 
                 break;
-            } case TOKEN_RETURN: { //Return statement
+            } case TOKEN_KEYWORD_RETURN: { //Return statement
 
                 break;
-            } case default: {
+            } default: {
 
                 return false;
             }
