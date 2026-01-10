@@ -1,9 +1,9 @@
 #include "Tokenise.h"
 
 
-static inline TOKEN_ID internal_find(char *str, size_t size) {
+static inline TOKEN_ID internal_find(char *str, uint8_t size) {
     TOKEN_ID id = -1; //Error condition
-    for(size_t i = 0; i < TOKEN_VECTOR_SIZE; i++) {
+    for(uint8_t i = 0; i < TOKEN_VECTOR_SIZE; i++) {
         if(size == strlen(TOKEN_VECTOR[i])) {
             if(memcmp(str, TOKEN_VECTOR[i], size) == 0) {
                 return i;
@@ -13,37 +13,13 @@ static inline TOKEN_ID internal_find(char *str, size_t size) {
     return id;
 }
 
-/**
-Map tokenSet;
-bool tokenise_generate_token_set(void) {
-
-    if(!map_init(&tokenSet, 10)) {
-        return false;
-    }
-    for(size_t i = 0; i < TOKEN_VECTOR_SIZE; i++) {
-        if(!map_insert(&tokenSet, TOKEN_VECTOR[i], strlen(TOKEN_VECTOR[i]), &i, sizeof(size_t))) {
-            map_destroy(&tokenSet);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-void tokenise_destroy_token_set(void) {
-    map_destroy(&tokenSet);
-    return;
-}
- */
-
-
-Token internal_tokenise(char **inp, bool consume) {
+inline Token internal_tokenise(char **inp, bool consume) {
     Token token;
     char *str = *inp;
     while(isspace(*str)) { //Skip leading whitespace
         str++;
     }
-    size_t idx = 0;
+    unsigned int idx = 0;
     bool containsSymbols = false;
     bool containsLetters = false;
     while(1) {
@@ -69,19 +45,13 @@ Token internal_tokenise(char **inp, bool consume) {
             //End of token when a space occurs
 
             TOKEN_ID tokenType = internal_find(str, idx + 1);
-            //TOKEN_ID *tokenType = (TOKEN_ID*)map_find(&tokenSet, str, idx + 1);
 
             if(tokenType != -1) {
                 //Keyword found
                 token.id = tokenType;
-            /*
-            if(tokenType) {
-                
-                token.id = *tokenType;
-            */
 
                 //Bug testing
-                memcpy(token.str, str, idx + 1);
+                //memcpy(token.str, str, idx + 1);
                 token.str[idx + 1] = '\0';
                 break;
             } else if(containsSymbols == false && containsLetters == false) {

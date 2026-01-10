@@ -1,37 +1,33 @@
 #include "Tokens.h"
 
 const char *TOKEN_VECTOR[] = {
-    "CALL",
-    "DEF",
-    "RETURN",
+    "GOTO",
+    "LABEL",
     "LET",
     "IF",
-    "ELIF",
-    "ELSE",
     "WHILE",
+    "END",
+    "LOAD",
+
     "+",
     "-",
     "*",
     "/",
+    "#",
+
     "=",
+
     "==",
     "!=",
     "<",
     ">",
     "<=",
     ">=",
-    "[",
-    "]",
-    "(",
-    ")",
-    "{",
-    "}",
-    ";"
 
+    ";",
 };
 
 const size_t TOKEN_VECTOR_SIZE = sizeof(TOKEN_VECTOR) / sizeof(TOKEN_VECTOR[0]);
-
 
 
 
