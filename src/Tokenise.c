@@ -13,13 +13,20 @@ static inline TOKEN_ID internal_find(char *str, uint8_t size) {
     return id;
 }
 
-inline Token internal_tokenise(char **inp, bool consume) {
-    Token token;
+static inline Token internal_tokenise(char **inp, bool consume) {
+
+    static Token token; //Cache last token
+    static bool wasPeeked = false;
+    if(consume && wasPeeked) { //If the token was previously peeked, and its consumed then return
+        wasPeeked = false;
+        return token;
+    } 
+
     char *str = *inp;
     while(isspace(*str)) { //Skip leading whitespace
         str++;
     }
-    unsigned int idx = 0;
+    int16_t idx = 0;
     bool containsSymbols = false;
     bool containsLetters = false;
     while(1) {

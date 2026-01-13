@@ -6,13 +6,9 @@
 #include <ctype.h>
 #include <string.h>
 #include "Tokens.h"
+#include "Structures.h"
 
-typedef struct Token {
 
-    TOKEN_ID id;
-    char str[MAX_TOKEN_LENGTH];
-
-} Token;
 
 
 Token tokenise_peek(char **str);
