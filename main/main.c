@@ -9,7 +9,6 @@ int main(int argc, char *argv[]) {
         printf("Usage: [./exec] [src.txt] [dest.txt]");
         return -1;
     }
-    FILE *dest = fopen(argv[2], "w");
     if(!output_set_file(argv[1])) {
         printf("File read error\n");
         return 1;

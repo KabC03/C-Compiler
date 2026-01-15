@@ -1,7 +1,7 @@
 #include "Variable_Manager.h"
-const uint8_t numVariables = 10;
+#define NUM_VARIABLES 10
 
-Variable stack[numVariables]; //Stack memory
+Variable stack[NUM_VARIABLES]; //Stack memory
 
 
 uint8_t variable_manager_add(Variable variable, int8_t value) {
@@ -9,7 +9,7 @@ uint8_t variable_manager_add(Variable variable, int8_t value) {
 
     Instruction instruction;
     instruction.arg2 = 0;
-    if(top > numVariables - 1) {
+    if(top > NUM_VARIABLES - 1) {
         //Full stack
         return false;
     }
@@ -18,7 +18,7 @@ uint8_t variable_manager_add(Variable variable, int8_t value) {
 
     instruction.opcode = INSTRUCTION_SET;
     instruction.arg1 = value;
-    instruction_write(instruction);
+    output_write_instruction(instruction);
     return top;
 }
 
@@ -26,8 +26,7 @@ uint8_t variable_manager_add(Variable variable, int8_t value) {
 uint8_t variable_manager_get(char *name) {
 
 
-    static uint8_t pushed = 0;
-    for(size_t i = 1; i < numVariables + 1; i++) {
+    for(size_t i = 1; i < NUM_VARIABLES + 1; i++) {
         Variable var = stack[i - 1];
         if(strlen(name) == strlen(var.name)) {
             if(strcmp(name, var.name) == 0) {

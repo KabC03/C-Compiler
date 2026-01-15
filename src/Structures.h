@@ -11,7 +11,7 @@ typedef struct Token {
 } Token;
 
 typedef struct Variable {
-    char name[MAX_TOKEN_LENGTH]
+    char name[MAX_TOKEN_LENGTH];
 } Variable;
 
 typedef struct Instruction {
