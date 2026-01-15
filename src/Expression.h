@@ -4,7 +4,7 @@
 #include "Structures.h"
 #include "Tokenise.h"
 
-
+bool expression_evaluate(char *text, uint8_t destinationAddress);
 
 
 #endif

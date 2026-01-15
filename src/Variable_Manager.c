@@ -4,25 +4,25 @@ const uint8_t numVariables = 10;
 Variable stack[numVariables]; //Stack memory
 
 
-Instruction variable_manager_add(Variable variable, int8_t value) {
-    static uint8_t top = 0; //0 address is NULL
+uint8_t variable_manager_add(Variable variable, int8_t value) {
+    static uint8_t top = 0; //0 address is NULL (used for temporary storage for constants)
 
     Instruction instruction;
     if(top > numVariables - 1) {
         //Full stack
-        instruction.opcode = INVALID;
-        return instruction;
+        return false;
     }
     top++;
     stack[top] = variable;
 
-    instruction.opcode = SET_STACK;
+    instruction.opcode = INSTRUCTION_SET;
     instruction.arg1 = value;
-    return instruction;
+    //instruction_write(instruction, outputFile);
+    return top;
 }
 
 
-Instruction variable_manager_get(char *name) {
+uint8_t variable_manager_get(char *name) {
 
 
     static uint8_t pushed = 0;
@@ -30,17 +30,12 @@ Instruction variable_manager_get(char *name) {
         Variable var = stack[i - 1];
         if(strlen(name) == strlen(var.name)) {
             if(strcmp(name, var.name) == 0) {
-                Instruction instruction;
-                instruction.opcode = GET_STACK;
-                instruction.arg1 = i;
-                return instruction; //i is the address
+                return i; //i is the address
             }
         }
     }
 
-    Instruction instruction;
-    instruction.opcode = INVALID;
-    return instruction; //Not found
+    return 0; //Not found
 }
 
 

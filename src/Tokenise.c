@@ -21,6 +21,9 @@ static inline Token internal_tokenise(char **inp, bool consume) {
         wasPeeked = false;
         return token;
     } 
+    if(!consume) {
+        wasPeeked = true;
+    }
 
     char *str = *inp;
     while(isspace(*str)) { //Skip leading whitespace

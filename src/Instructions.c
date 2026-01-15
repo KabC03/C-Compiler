@@ -14,8 +14,7 @@ const char *INSTRUCTION_IMPLEMENTATION[] = {
     "LESS_EQUAL",
     "GREATER",
     "LESS",
-    "SET_STACK",
-    "GET_STACK",
+    "SET",
 
 };
 
