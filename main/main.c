@@ -1,4 +1,5 @@
 #include "../src/Tokenise.h"
+#include "../src/Output.h"
 #include <time.h>
 #include <stdio.h>
 
@@ -8,18 +9,14 @@ int main(int argc, char *argv[]) {
         printf("Usage: [./exec] [src.txt] [dest.txt]");
         return -1;
     }
-    FILE *src = fopen(argv[1], "r");
     FILE *dest = fopen(argv[2], "w");
-    if(!src || !dest) {
-        if(src) fclose(src);
-        if(dest) fclose(dest);
-        printf("File read error");
-        return -2;
+    if(!output_set_file(argv[1])) {
+        printf("File read error\n");
+        return 1;
     }
 
 
-    fclose(src);
-    fclose(dest);
+    output_close_file();
     
     return 0;
 }

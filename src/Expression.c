@@ -17,7 +17,7 @@ bool expression_evaluate(char *text, uint8_t destinationAddress) {
     bool expectOperand = true;
     uint8_t operandAddress = 0;
     Instruction instruction;
-
+    instruction.arg2 = 0;
     while(token.id != TOKEN_SYMBOL_CLOSE_BRACE && !expectOperand) {
         token = tokenise_consume(&text);        
         if(token.id == TOKEN_INVALID) {
@@ -30,6 +30,8 @@ bool expression_evaluate(char *text, uint8_t destinationAddress) {
                     //Load to temporary register 0
                     instruction.opcode = INSTRUCTION_SET;
                     instruction.arg1 = atoi(token.str);
+                    output_write_instruction(instruction);
+
                     operandAddress = 0;
                     break;
                 } case TOKEN_IDENTIFIER: {
@@ -65,7 +67,9 @@ bool expression_evaluate(char *text, uint8_t destinationAddress) {
                     return false;
                 }
             }
-            //instruction_write(instruction, outputFile);
+            instruction.arg1 = destinationAddress;
+            instruction.arg2 = operandAddress;
+            output_write_instruction(instruction);
         }
         expectOperand = !expectOperand;
     }

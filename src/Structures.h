@@ -19,7 +19,6 @@ typedef struct Instruction {
     INSTRUCTION opcode;
     uint8_t arg1;
     uint8_t arg2;
-    int16_t arg3;
     char str[MAX_TOKEN_LENGTH];
 
 } Instruction;

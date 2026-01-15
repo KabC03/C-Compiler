@@ -8,6 +8,7 @@ uint8_t variable_manager_add(Variable variable, int8_t value) {
     static uint8_t top = 0; //0 address is NULL (used for temporary storage for constants)
 
     Instruction instruction;
+    instruction.arg2 = 0;
     if(top > numVariables - 1) {
         //Full stack
         return false;
@@ -17,7 +18,7 @@ uint8_t variable_manager_add(Variable variable, int8_t value) {
 
     instruction.opcode = INSTRUCTION_SET;
     instruction.arg1 = value;
-    //instruction_write(instruction, outputFile);
+    instruction_write(instruction);
     return top;
 }
 
