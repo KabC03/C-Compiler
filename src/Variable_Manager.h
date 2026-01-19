@@ -8,7 +8,7 @@
 
 uint8_t variable_manager_add(Variable variable, int8_t value);
 uint8_t variable_manager_get(char *name);
-
+void variable_manager_destory(void);
 
 
 #endif

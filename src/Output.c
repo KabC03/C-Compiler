@@ -12,8 +12,12 @@ bool output_set_file(char *fileName) {
 }
 
 void output_write_instruction(Instruction instruction) {
+    if(instruction.str[0] == '\0') {
+        fprintf(file, "%s %d %d\n", INSTRUCTION_IMPLEMENTATION[instruction.opcode], instruction.arg1, instruction.arg2);
+    } else {
+        fprintf(file, "%s %d %s\n", INSTRUCTION_IMPLEMENTATION[instruction.opcode], instruction.arg1, instruction.str);
+    }
 
-    fprintf(file, "%s %d %d\n", INSTRUCTION_IMPLEMENTATION[instruction.opcode], instruction.arg1, instruction.arg2);
     //Note that instructions may contain garbage, intepreter should ignore garbage values
     return;
 }

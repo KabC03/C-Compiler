@@ -18,6 +18,7 @@ bool expression_evaluate(char *text, uint8_t destinationAddress) {
     uint8_t operandAddress = 0;
     Instruction instruction;
     instruction.arg2 = 0;
+    instruction.str[0] = '\0';
     while(token.id != TOKEN_SYMBOL_CLOSE_BRACE && !expectOperand) {
         token = tokenise_consume(&text);        
         if(token.id == TOKEN_INVALID) {

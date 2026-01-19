@@ -1,32 +1,36 @@
 #include "Variable_Manager.h"
-#define NUM_VARIABLES 10
 
-Variable stack[NUM_VARIABLES]; //Stack memory
-
+Variable *stack; //Stack memory (VECTORISE THIS)
+uint8_t stackSize = 0;
+uint8_t stackTop = 0;
 
 uint8_t variable_manager_add(Variable variable, int8_t value) {
-    static uint8_t top = 0; //0 address is NULL (used for temporary storage for constants)
 
     Instruction instruction;
     instruction.arg2 = 0;
-    if(top > NUM_VARIABLES - 1) {
+    instruction.str[0] = '\0';
+    if(stackSize > stackTop) {
         //Full stack
-        return false;
+        stack = realloc(stack, stackTop * 2);
+        stackTop *= 2;
+        if(!stack) {
+            return 0;
+        }
     }
-    top++;
-    stack[top] = variable;
+    stackSize++;
+    stack[stackSize] = variable;
 
     instruction.opcode = INSTRUCTION_SET;
     instruction.arg1 = value;
     output_write_instruction(instruction);
-    return top;
+    return stackSize;
 }
 
 
 uint8_t variable_manager_get(char *name) {
 
 
-    for(size_t i = 1; i < NUM_VARIABLES + 1; i++) {
+    for(size_t i = 1; i < stackSize + 1; i++) {
         Variable var = stack[i - 1];
         if(strlen(name) == strlen(var.name)) {
             if(strcmp(name, var.name) == 0) {
@@ -38,5 +42,9 @@ uint8_t variable_manager_get(char *name) {
     return 0; //Not found
 }
 
+void variable_manager_destory(void) {
+    free(stack);
+    return;
+}
 
 

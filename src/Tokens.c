@@ -5,7 +5,6 @@ const char *TOKEN_VECTOR[] = {
     "LABEL",
     "LET",
     "IF",
-    "WHILE",
     "END",
     "LOAD",
 
