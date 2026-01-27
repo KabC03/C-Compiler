@@ -1,11 +1,11 @@
 #include "Parse.h++"
 
-std::vector<std::tuple<std::string, uint16_t>> labels; //Label, Address
+std::vector<std::string> labels; //Label
 uint16_t lineCount = 0; //Counting instructions
 uint16_t retAddress = 0; //Return address for goto
 
 std::vector<uint16_t> ifStack;
-uint16_t ifCount = 0;
+uint16_t ifStatementCount = 0;
 
 bool internal_parse_label(char **text) {
     //label x
@@ -16,14 +16,22 @@ bool internal_parse_label(char **text) {
     }
 
     for(auto item : labels) {
-        if(std::get<0>(item) == label.str) {
+        if(item == label.str) {
             //Duplicate label
             printf("Duplicated label '%s'\n", label.str);
             return false;
         }
     }
 
-    labels.push_back(std::make_tuple(label.str, lineCount));
+    Instruction instruction;
+    instruction.opcode = INSTRUCTION_LABEL;
+    instruction.arg3 = label.str;
+    instruction.arg1 = 0;
+    instruction.arg2 = 0;
+    output_write_instruction(instruction);
+    lineCount++;
+
+    labels.push_back(label.str);
 
     return true;
 }
@@ -39,11 +47,12 @@ bool internal_parse_goto(char **text) {
     }
 
     for(auto item : labels) {
-        if(std::get<0>(item) == label.str) {
+        if(item == label.str) {
 
             Instruction instruction;
             instruction.opcode = INSTRUCTION_GOTO;
-            instruction.arg1 = (int)std::get<1>(item);
+            instruction.arg3 = item;
+            instruction.arg1 = 0;
             instruction.arg2 = 0;
             output_write_instruction(instruction);
             lineCount++;
@@ -93,7 +102,7 @@ bool internal_parse_let(char **text) {
     return true;
 }
 
-bool internal_parse_ret(char **text) {
+bool internal_parse_ret(void) {
     //ret
     Instruction instruction;
     instruction.opcode = INSTRUCTION_GOTO;
@@ -106,20 +115,133 @@ bool internal_parse_ret(char **text) {
 }
 
 bool internal_parse_if(char **text) {
-    //if(x == y)
+    //if x == y
     //...
     //end
+    Token var1 = tokenise_consume(text);
+    if(var1.id == TOKEN_IDENTIFIER) {
+        printf("Invalid token: '%s'", var1.str);
+        return false;
+    }
+
+    Instruction instruction;
+    Token op = tokenise_consume(text);
+    switch(op.id) {
+        case TOKEN_SYMBOL_DOUBLE_EQUAL: {
+            instruction.opcode = INSTRUCTION_EQUAL;
+            break;
+        } case TOKEN_SYMBOL_NOT_EQUAL: {
+            instruction.opcode = INSTRUCTION_NOT_EQUAL;
+            break;
+        } case TOKEN_SYMBOL_GREATER_EQUAL: {
+            instruction.opcode = INSTRUCTION_GREATER_EQUAL;
+            break;
+        } case TOKEN_SYMBOL_GREATER_THAN: {
+            instruction.opcode = INSTRUCTION_GREATER;
+            break;
+        } default: {
+            printf("Invalid token: '%s'", op.str);
+            return false;
+            break;
+        }
+    }
+
+    Token var2 = tokenise_consume(text);
+    if(var2.id == TOKEN_IDENTIFIER) {
+        printf("Invalid token: '%s'", var2.str);
+        return false;
+    }
+
+    uint8_t var1Address = variable_manager_get(var1.str);
+    uint8_t var2Address = variable_manager_get(var2.str);
+
+    if(var1Address == 0) {
+        printf("Invalid variable: '%s'", var1.str);
+        return false;
+    }
+    if(var2Address == 0) {
+        printf("Invalid variable: '%s'", var2.str);
+        return false;
+    }
+
+
+    instruction.arg1 = var1Address;
+    instruction.arg2 = var2Address;
+    ifStack.push_back(ifStatementCount);
+    instruction.arg3 = "IF_" + std::to_string(ifStatementCount);
+    ifStatementCount++;
+    return true;
 }
 
-bool internal_parse_end(char **text) {
+bool internal_parse_end(void) {
     if(ifStack.size() == 0) {
         printf("Expect if statement\n");
         return false;
     }
-    
+    Instruction instruction;
+    instruction.opcode = INSTRUCTION_LABEL;
+
+    uint16_t val = ifStack.back();
+    ifStack.pop_back();
+    instruction.opcode = INSTRUCTION_GOTO;
+    instruction.arg3 = "IF_" + std::to_string(val);
+    instruction.arg1 = 0;
+    instruction.arg2 = 0;
+    output_write_instruction(instruction);
+    lineCount++;
 
     return true;
 }
 
+uint16_t parse_parse(char **text) {
 
+
+    while(tokenise_peek(text).id != TOKEN_EOF) {
+        Token token = tokenise_consume(text);
+
+        switch(token.id) {
+            case TOKEN_KEYWORD_LET: {
+                if(internal_parse_let(text) == false) {
+                    printf("Line %hu\n", lineCount);
+                }
+
+                break;
+            } case TOKEN_KEYWORD_END: {
+                if(internal_parse_end() == false) {
+                    printf("Line %hu\n", lineCount);
+                }
+
+                break;
+            } case TOKEN_KEYWORD_GOTO: {
+                if(internal_parse_goto(text) == false) {
+                    printf("Line %hu\n", lineCount);
+                }
+
+                break;
+            } case TOKEN_KEYWORD_IF: {
+                if(internal_parse_if(text) == false) {
+                    printf("Line %hu\n", lineCount);
+                }
+
+                break;
+            } case TOKEN_KEYWORD_LABEL: {
+                if(internal_parse_label(text) == false) {
+                    printf("Line %hu\n", lineCount);
+                }
+
+                break;
+            } case TOKEN_KEYWORD_RET: {
+                if(internal_parse_ret() == false) {
+                    printf("Line %hu\n", lineCount);
+                }
+
+                break;
+            } default: {
+
+            }
+        }
+    }
+
+    return lineCount;
+}
 

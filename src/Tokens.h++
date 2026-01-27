@@ -8,6 +8,7 @@
 
 typedef enum TOKEN_ID : int {
 
+    TOKEN_EOF = -4,
     TOKEN_INVALID = -1,    
     TOKEN_IDENTIFIER = -2,
     TOKEN_LITERAL = -3,

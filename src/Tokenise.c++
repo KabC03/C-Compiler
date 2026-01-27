@@ -34,6 +34,14 @@ static inline Token internal_tokenise(char **inp, bool consume) {
 
         str++;
     }
+    if(*str == '\0') {
+        token.id = TOKEN_EOF;
+        if(consume) {
+            *inp = str;
+        }
+        return token;
+    }
+
     int16_t idx = 0;
     bool containsSymbols = false;
     bool containsLetters = false;

@@ -1,5 +1,6 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
+#include <string>
 #include "Tokens.h++"
 #include "Instructions.h++"
 
@@ -16,7 +17,7 @@ typedef struct Instruction {
     INSTRUCTION opcode;
     uint8_t arg1;
     uint8_t arg2;
-    char arg3[MAX_TOKEN_LENGTH] = "";
+    std::string arg3 = "";
 
 } Instruction;
 
