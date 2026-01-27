@@ -1,4 +1,4 @@
-#include "Tokens.h"
+#include "Tokens.h++"
 
 const char *TOKEN_VECTOR[] = {
     "GOTO",
@@ -6,7 +6,7 @@ const char *TOKEN_VECTOR[] = {
     "LET",
     "IF",
     "END",
-    "LOAD",
+    "RET",
 
     "+",
     "-",

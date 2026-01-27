@@ -6,7 +6,7 @@
 
 
 
-typedef enum TOKEN_ID {
+typedef enum TOKEN_ID : int {
 
     TOKEN_INVALID = -1,    
     TOKEN_IDENTIFIER = -2,
@@ -17,7 +17,7 @@ typedef enum TOKEN_ID {
     TOKEN_KEYWORD_LET,
     TOKEN_KEYWORD_IF,
     TOKEN_KEYWORD_END,
-    TOKEN_KEYWORD_LOAD,
+    TOKEN_KEYWORD_RET,
 
     TOKEN_SYMBOL_PLUS,
     TOKEN_SYMBOL_MINUS,

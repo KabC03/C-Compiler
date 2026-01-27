@@ -1,5 +1,5 @@
-#include "../src/Tokenise.h"
-#include "../src/Output.h"
+#include "../src/Tokenise.h++"
+#include "../src/Output.h++"
 #include <time.h>
 #include <stdio.h>
 

@@ -5,15 +5,15 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "Tokens.h"
-#include "Structures.h"
+#include "Tokens.h++"
+#include "Structures.h++"
 
 
 
 
 Token tokenise_peek(char **str);
 Token tokenise_consume(char **str);
-
+uint16_t get_line_number(void);
 /*
 bool tokenise_generate_token_set(void);
 void tokenise_destroy_token_set(void);

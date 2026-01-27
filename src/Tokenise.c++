@@ -1,12 +1,13 @@
-#include "Tokenise.h"
+#include "Tokenise.h++"
 
+uint16_t lineNumber = 0;
 
 static inline TOKEN_ID internal_find(char *str, uint8_t size) {
-    TOKEN_ID id = -1; //Error condition
+    TOKEN_ID id = TOKEN_INVALID; //Error condition
     for(uint8_t i = 0; i < TOKEN_VECTOR_SIZE; i++) {
         if(size == strlen(TOKEN_VECTOR[i])) {
             if(memcmp(str, TOKEN_VECTOR[i], size) == 0) {
-                return i;
+                return (TOKEN_ID)i;
             }
         }
     }
@@ -27,6 +28,10 @@ static inline Token internal_tokenise(char **inp, bool consume) {
 
     char *str = *inp;
     while(isspace(*str)) { //Skip leading whitespace
+        if(*str == '\n') {
+            lineNumber++;
+        }
+
         str++;
     }
     int16_t idx = 0;
@@ -34,9 +39,11 @@ static inline Token internal_tokenise(char **inp, bool consume) {
     bool containsLetters = false;
     while(1) {
         if(str[idx] == '\0') { //Incomplete token
+            memcpy(token.str, str, idx + 1);
             token.id = TOKEN_INVALID;
             return token;
         } else if(idx > MAX_TOKEN_LENGTH - 2) {
+            memcpy(token.str, str, MAX_TOKEN_LENGTH);
             token.id = TOKEN_INVALID;
             return token;
         }
@@ -99,6 +106,9 @@ Token tokenise_consume(char **str) {
     return internal_tokenise(str, true);
 }
 
+uint16_t get_line_number(void) {
+    return lineNumber;
+}
 
 
 

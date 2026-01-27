@@ -1,4 +1,4 @@
-#include "Instructions.h"
+#include "Instructions.h++"
 
 const char *INSTRUCTION_IMPLEMENTATION[] = {
 
@@ -15,6 +15,7 @@ const char *INSTRUCTION_IMPLEMENTATION[] = {
     "GREATER",
     "LESS",
     "SET",
-
+    "GOTO",
+    "IMM",
 };
 
