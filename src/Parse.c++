@@ -57,7 +57,7 @@ bool internal_parse_goto(char **text) {
 }
 
 bool internal_parse_let(char **text) {
-    //set x = (1 + 2 + z + var)
+    //let x = (1 + 2 + z + var)
 
     Token varName = tokenise_consume(text);
     if(varName.id != TOKEN_IDENTIFIER) {
@@ -94,7 +94,7 @@ bool internal_parse_let(char **text) {
 }
 
 bool internal_parse_ret(char **text) {
-
+    //ret
     Instruction instruction;
     instruction.opcode = INSTRUCTION_GOTO;
     instruction.arg1 = retAddress;
@@ -106,6 +106,20 @@ bool internal_parse_ret(char **text) {
 }
 
 bool internal_parse_if(char **text) {
-    
+    //if(x == y)
+    //...
+    //end
 }
+
+bool internal_parse_end(char **text) {
+    if(ifStack.size() == 0) {
+        printf("Expect if statement\n");
+        return false;
+    }
+    
+
+    return true;
+}
+
+
 
