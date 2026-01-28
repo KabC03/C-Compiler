@@ -26,8 +26,10 @@ int main(int argc, char *argv[]) {
     fseek(inputFile, 0, SEEK_END);
     long size = ftell(inputFile);
     fseek(inputFile, cur, SEEK_SET);
-
-
+    if(size == 0) {
+        printf("File read error for input\n");
+        return -1;
+    }
     char *buffer = (char*)malloc(size);
     if(!buffer) {
         printf("Input file alloc error\n");

@@ -18,8 +18,10 @@ static inline Token internal_tokenise(char **inp, bool consume) {
 
     static Token token; //Cache last token
     static bool wasPeeked = false;
+    static char *peekNext = NULL;
     if(consume && wasPeeked) { //If the token was previously peeked, and its consumed then return
         wasPeeked = false;
+        *inp = peekNext;
         return token;
     } 
     if(!consume) {
@@ -76,7 +78,7 @@ static inline Token internal_tokenise(char **inp, bool consume) {
                 token.id = tokenType;
 
                 //Bug testing
-                //memcpy(token.str, str, idx + 1);
+                memcpy(token.str, str, idx + 1);
                 token.str[idx + 1] = '\0';
                 break;
             } else if(containsSymbols == false && containsLetters == false) {
@@ -96,9 +98,13 @@ static inline Token internal_tokenise(char **inp, bool consume) {
         idx++;
     }
 
+    char *next = str + (idx + 1);
+    if(!consume) {
+        wasPeeked = true;
+        peekNext = next;
 
-    if(consume) {
-        *inp += (idx + 2);
+    } else {
+        *inp = next;
     }
 
     return token;

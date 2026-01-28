@@ -8,8 +8,8 @@
 #include "Output.h++"
 
 
-uint16_t variable_manager_add(std::string variable, int8_t value);
-uint8_t variable_manager_get(char *name);
+uint16_t variable_manager_add(std::string variable);
+uint16_t variable_manager_get(char *name);
 
 
 #endif

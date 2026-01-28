@@ -7,7 +7,7 @@
 #include "Variable_Manager.h++"
 #include "Output.h++"
 
-uint16_t expression_evaluate(char **text, uint8_t destinationAddress);
+bool expression_evaluate(char **text, uint8_t destinationAddress);
 
 
 #endif

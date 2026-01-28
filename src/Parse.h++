@@ -9,6 +9,6 @@
 #include "Variable_Manager.h++"
 #include "Expression.h++"
 
-uint16_t parse_parse(char **text);
+bool parse_parse(char **text);
 
 #endif

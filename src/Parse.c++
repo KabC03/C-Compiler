@@ -1,7 +1,6 @@
 #include "Parse.h++"
 
 std::vector<std::string> labels; //Label
-uint16_t lineCount = 0; //Counting instructions
 uint16_t retAddress = 0; //Return address for goto
 
 std::vector<uint16_t> ifStack;
@@ -11,7 +10,7 @@ bool internal_parse_label(char **text) {
     //label x
     Token label = tokenise_consume(text);
     if(label.id == TOKEN_IDENTIFIER) {
-        printf("Invalid token: '%s'", label.str);
+        printf("Invalid token: '%s', %d", label.str, label.id);
         return false;
     }
 
@@ -29,7 +28,7 @@ bool internal_parse_label(char **text) {
     instruction.arg1 = 0;
     instruction.arg2 = 0;
     output_write_instruction(instruction);
-    lineCount++;
+    
 
     labels.push_back(label.str);
 
@@ -38,11 +37,10 @@ bool internal_parse_label(char **text) {
 
 bool internal_parse_goto(char **text) {
     //goto x
-    retAddress = lineCount;
     
     Token label = tokenise_consume(text);
     if(label.id == TOKEN_IDENTIFIER) {
-        printf("Invalid token: '%s'", label.str);
+        printf("Invalid token: '%s', %d", label.str, label.id);
         return false;
     }
 
@@ -55,7 +53,7 @@ bool internal_parse_goto(char **text) {
             instruction.arg1 = 0;
             instruction.arg2 = 0;
             output_write_instruction(instruction);
-            lineCount++;
+            
 
             return true;
         }
@@ -70,7 +68,7 @@ bool internal_parse_let(char **text) {
 
     Token varName = tokenise_consume(text);
     if(varName.id != TOKEN_IDENTIFIER) {
-        printf("Invalid token: '%s'\n", varName.str);
+        printf("Invalid token: '%s', '%d'\n", varName.str, varName.id);
         return false;
     }
 
@@ -80,21 +78,13 @@ bool internal_parse_let(char **text) {
         return false;
     }
 
-    Token immediate = tokenise_consume(text);
-    if(varName.id != TOKEN_LITERAL) {
-        printf("Invalid immediate: '%s'\n", varName.str);
-        return false;
-    }
-
-    uint16_t returnAddress = variable_manager_add(varName.str, std::stoi(immediate.str));
+    uint16_t returnAddress = variable_manager_add(varName.str);
     if(returnAddress == 0) {
         return false;
     }
 
     //Expression part
-    uint16_t lineCountAdd = expression_evaluate(text, returnAddress);
-    lineCount += lineCountAdd;
-    if(lineCountAdd == 0) {
+    if(!expression_evaluate(text, returnAddress)) {
         printf("Invalid expression\n");
         return false;
     }
@@ -109,7 +99,7 @@ bool internal_parse_ret(void) {
     instruction.arg1 = retAddress;
     instruction.arg2 = 0;
     output_write_instruction(instruction);
-    lineCount++;
+    
 
     return true;
 }
@@ -120,7 +110,7 @@ bool internal_parse_if(char **text) {
     //end
     Token var1 = tokenise_consume(text);
     if(var1.id == TOKEN_IDENTIFIER) {
-        printf("Invalid token: '%s'", var1.str);
+        printf("Invalid token: '%s', %d", var1.str, var1.id);
         return false;
     }
 
@@ -140,7 +130,7 @@ bool internal_parse_if(char **text) {
             instruction.opcode = INSTRUCTION_GREATER;
             break;
         } default: {
-            printf("Invalid token: '%s'", op.str);
+            printf("Invalid token: '%s', '%d'", op.str, op.id);
             return false;
             break;
         }
@@ -148,7 +138,7 @@ bool internal_parse_if(char **text) {
 
     Token var2 = tokenise_consume(text);
     if(var2.id == TOKEN_IDENTIFIER) {
-        printf("Invalid token: '%s'", var2.str);
+        printf("Invalid token: '%s', '%d'", var2.str, var2.id);
         return false;
     }
 
@@ -188,12 +178,12 @@ bool internal_parse_end(void) {
     instruction.arg1 = 0;
     instruction.arg2 = 0;
     output_write_instruction(instruction);
-    lineCount++;
+    
 
     return true;
 }
 
-uint16_t parse_parse(char **text) {
+bool parse_parse(char **text) {
 
 
     while(tokenise_peek(text).id != TOKEN_EOF) {
@@ -202,46 +192,53 @@ uint16_t parse_parse(char **text) {
         switch(token.id) {
             case TOKEN_KEYWORD_LET: {
                 if(internal_parse_let(text) == false) {
-                    printf("Line %hu\n", lineCount);
+
+                    return false;
                 }
 
                 break;
             } case TOKEN_KEYWORD_END: {
                 if(internal_parse_end() == false) {
-                    printf("Line %hu\n", lineCount);
+
+                    return false;
                 }
 
                 break;
             } case TOKEN_KEYWORD_GOTO: {
                 if(internal_parse_goto(text) == false) {
-                    printf("Line %hu\n", lineCount);
+                    return false;
                 }
 
                 break;
             } case TOKEN_KEYWORD_IF: {
                 if(internal_parse_if(text) == false) {
-                    printf("Line %hu\n", lineCount);
+
+                    return false;
                 }
 
                 break;
             } case TOKEN_KEYWORD_LABEL: {
                 if(internal_parse_label(text) == false) {
-                    printf("Line %hu\n", lineCount);
+
+                    return false;
                 }
 
                 break;
             } case TOKEN_KEYWORD_RET: {
                 if(internal_parse_ret() == false) {
-                    printf("Line %hu\n", lineCount);
+
+                    return false;
                 }
 
                 break;
             } default: {
-
+                printf("Invalid token '%s', '%d'\n", token.str, token.id);
+                return false;
+                break;
             }
         }
     }
 
-    return lineCount;
+    return true;
 }
 

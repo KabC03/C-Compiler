@@ -14,9 +14,9 @@ typedef struct Token {
 
 typedef struct Instruction {
 
-    INSTRUCTION opcode;
-    uint8_t arg1;
-    uint8_t arg2;
+    INSTRUCTION opcode = INSTRUCTION_INVALID;
+    uint8_t arg1 = 0;
+    uint8_t arg2 = 0;
     std::string arg3 = "";
 
 } Instruction;

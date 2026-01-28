@@ -18,5 +18,6 @@ const char *INSTRUCTION_IMPLEMENTATION[] = {
     "GOTO",
     "IMM",
     "LABEL",
+    "MOV",
 };
 

@@ -6,101 +6,96 @@
 
 
 
-uint16_t expression_evaluate(char **text, uint8_t destinationAddress) {
-    uint16_t lineCount = 0;
+bool expression_evaluate(char **text, uint8_t destinationAddress) {
     Token token;
     token = tokenise_consume(text);
     if(token.id != TOKEN_SYMBOL_OPEN_BRACE) {
-        printf("Invalid token: '%s'", token.str);
+        printf("Invalid tokens: '%s'\n", token.str);
         return false;
     }
-
-    bool expectOperand = true;
-    uint8_t operandAddress = 0;
-    Instruction instruction;
-    instruction.arg2 = 0;
     bool running = true;
+    bool expectOperand = true;
+    uint16_t loaded = 0;
+    Instruction instruction;
+
     while(running) {
-        token = tokenise_consume(text);        
-        if(token.id == TOKEN_INVALID) {
-            printf("Invalid token: '%s'", token.str);
-            return false;
-        }
-
+        token = tokenise_consume(text);
         if(expectOperand) {
-            switch(token.id) {
-                case TOKEN_LITERAL: {
-                    //Load to temporary register 0
-                    instruction.opcode = INSTRUCTION_SET;
-                    instruction.arg1 = atoi(token.str);
-                    output_write_instruction(instruction);
+            if(loaded == 0) {
+                instruction.arg1 = destinationAddress;
+            } else {
+                instruction.arg1 = destinationAddress;
+            }
 
-                    operandAddress = 0;
+            loaded++;
+            switch(token.id) {
+                //Load addition into zero address
+
+
+                case TOKEN_LITERAL: {
+                    instruction.arg3 = token.str;
+                    instruction.opcode = INSTRUCTION_IMM;
+                    output_write_instruction(instruction);
                     break;
                 } case TOKEN_IDENTIFIER: {
-                    //Load from stack
-
-                    operandAddress = variable_manager_get(token.str);
-                    if(operandAddress == 0) {
-                        printf("Variable '%s' not found\n", token.str);
+                    auto varAddress = variable_manager_get(token.str);
+                    if(varAddress == 0) {
+                        printf("Unknown variable: '%s'\n", token.str);
                         return false;
                     }
+                    instruction.arg3 = varAddress;
+                    instruction.opcode = INSTRUCTION_MOV;
+                    output_write_instruction(instruction);
 
                     break;
                 } default: {
-                    printf("Invalid token: '%s'", token.str);
+                    printf("Expect valid operand '%s'\n", token.str);
                     return false;
+                    break;
                 }
             }
-
-
         } else {
+
             switch(token.id) {
-                case TOKEN_SYMBOL_PLUS: {
+                case TOKEN_SYMBOL_CLOSE_BRACE: { //End condition
+                    running = false;
+                } case TOKEN_SYMBOL_PLUS: {
                     instruction.opcode = INSTRUCTION_ADD;
                     break;
                 } case TOKEN_SYMBOL_MINUS: {
                     instruction.opcode = INSTRUCTION_SUB;
                     break;
-                } case TOKEN_SYMBOL_ASTERISK: {
-                    instruction.opcode = INSTRUCTION_MUL;
-                    break;
                 } case TOKEN_SYMBOL_SLASH: {
                     instruction.opcode = INSTRUCTION_DIV;
                     break;
-                } case TOKEN_SYMBOL_CLOSE_BRACE: {
-                    running = false;
+                } case TOKEN_SYMBOL_ASTERISK: {
+                    instruction.opcode = INSTRUCTION_MUL;
                     break;
                 } default: {
-                    printf("Invalid token: '%s'", token.str);
+                    printf("Expect valid operator '%s'\n", token.str);
                     return false;
+                    break;
                 }
             }
 
-            if(operandAddress != 0) {
+            if(loaded >= 2) {
                 instruction.arg1 = destinationAddress;
-                instruction.arg2 = operandAddress;
-                output_write_instruction(instruction);
-                lineCount++;
+                instruction.arg2 = 0; //Source address always zero
 
-            } else { //No second operand
-                instruction.opcode = INSTRUCTION_IMM;
-                instruction.arg1 = destinationAddress;
-                instruction.arg2 = 0;
                 output_write_instruction(instruction);
-                lineCount++;
-                break;
             }
+
         }
+
         expectOperand = !expectOperand;
     }
 
-    if(expectOperand == true) {
-        printf("Expect operand: '%s'", token.str);
-        return false; //Last token was a operator
+    if(!expectOperand) { //Condition is inverted above
+        printf("Expect operand after operator\n");
+        return false;
     }
 
-    return lineCount;
+    return true;
 }
 
 
